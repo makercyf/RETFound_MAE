@@ -162,9 +162,12 @@ def main(args, criterion):
     device = torch.device(args.device)
 
     # fix the seed for reproducibility
-    seed = args.seed + misc.get_rank()
-    torch.manual_seed(seed)
-    np.random.seed(seed)
+    # seed = args.seed + misc.get_rank()
+    # torch.manual_seed(seed)
+    # np.random.seed(seed)
+
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
 
     cudnn.benchmark = True
 
@@ -252,7 +255,7 @@ def main(args, criterion):
                       'equal num of samples per-process.')
             sampler_test = torch.utils.data.DistributedSampler(
                 dataset_test, num_replicas=num_tasks, rank=global_rank,
-                shuffle=True)  # shuffle=True to reduce monitor bias
+                shuffle=False)  # shuffle=True to reduce monitor bias
         else:
             sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
@@ -286,7 +289,8 @@ def main(args, criterion):
         batch_size=args.batch_size,
         num_workers=args.num_workers,
         pin_memory=args.pin_mem,
-        drop_last=False
+        drop_last=False,
+        shuffle=False
     )
 
     mixup_fn = None
