@@ -339,8 +339,10 @@ def main(args, criterion):
     if args.eval:
         if 'epoch' in checkpoint:
             print("Test with the best model at epoch = %d" % checkpoint['epoch'])
-        test_stats, auc_roc = evaluate(data_loader_test, model, device, args, epoch=0, mode='test',
+        test_stats, auc_roc, all_probs, all_targets = evaluate(data_loader_test, model, device, args, epoch=0, mode='test',
                                        num_class=args.nb_classes, log_writer=log_writer)
+        np.save(os.path.join(args.output_dir, f"{args.task}_probs.npy"), all_probs)
+        np.save(os.path.join(args.output_dir, f"{args.task}_targets.npy"), all_targets)
         exit(0)
 
     print(f"Start training for {args.epochs} epochs")
