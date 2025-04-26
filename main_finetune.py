@@ -186,12 +186,15 @@ def main(args, criterion):
         
         print(f"Downloading pre-trained weights from: {args.finetune}")
         
-        checkpoint_path = hf_hub_download(
-            repo_id=f'YukunZhou/{args.finetune}',
-            filename=f'{args.finetune}.pth',
-        )
-        
-        checkpoint = torch.load(checkpoint_path, map_location='cpu')
+        if os.path.exists(args.finetune):
+            checkpoint = torch.load(args.finetune, map_location='cpu')
+        else:
+            checkpoint_path = hf_hub_download(
+                repo_id=f'YukunZhou/{args.finetune}',
+                filename=f'{args.finetune}.pth',
+            )
+            checkpoint = torch.load(checkpoint_path, map_location='cpu')
+
         print("Load pre-trained checkpoint from: %s" % args.finetune)
         
         if args.model!='RETFound_mae':
